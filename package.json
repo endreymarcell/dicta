@@ -1,13 +1,13 @@
 {
-	"name": "cat-coding",
-	"description": "Cat Coding - A Webview API Sample",
+	"name": "dicta",
+	"description": "Dicta",
 	"version": "0.0.1",
-	"publisher": "vscode-samples",
+	"publisher": "endrey.marcell@gmail.com",
 	"private": true,
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Microsoft/vscode-extension-samples"
+		"url": "https://github.com/endreymarcell/dicta"
 	},
 	"engines": {
 		"vscode": "^1.47.0"
@@ -16,22 +16,16 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:catCoding.start",
-		"onCommand:catCoding.doRefactor",
-		"onWebviewPanel:catCoding"
+		"onCommand:dicta.start",
+		"onWebviewPanel:dicta"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "catCoding.start",
-				"title": "Start cat coding session",
-				"category": "Cat Coding"
-			},
-			{
-				"command": "catCoding.doRefactor",
-				"title": "Do some refactoring",
-				"category": "Cat Coding"
+				"command": "dicta.start",
+				"title": "Open up Dicta",
+				"category": "Dicta"
 			}
 		]
 	},

@@ -1,23 +1,9 @@
 import * as vscode from 'vscode';
 
-const cats = {
-	'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
-	'Compiling Cat': 'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif',
-	'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
-};
-
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
-		vscode.commands.registerCommand('catCoding.start', () => {
+		vscode.commands.registerCommand('dicta.start', () => {
 			CatCodingPanel.createOrShow(context.extensionUri);
-		})
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('catCoding.doRefactor', () => {
-			if (CatCodingPanel.currentPanel) {
-				CatCodingPanel.currentPanel.doRefactor();
-			}
 		})
 	);
 
@@ -44,16 +30,13 @@ function getWebviewOptions(extensionUri: vscode.Uri): vscode.WebviewOptions {
 	};
 }
 
-/**
- * Manages cat coding webview panels
- */
 class CatCodingPanel {
 	/**
 	 * Track the currently panel. Only allow a single panel to exist at a time.
 	 */
 	public static currentPanel: CatCodingPanel | undefined;
 
-	public static readonly viewType = 'catCoding';
+	public static readonly viewType = 'dicta';
 
 	private readonly _panel: vscode.WebviewPanel;
 	private readonly _extensionUri: vscode.Uri;
@@ -73,7 +56,7 @@ class CatCodingPanel {
 		// Otherwise, create a new panel.
 		const panel = vscode.window.createWebviewPanel(
 			CatCodingPanel.viewType,
-			'Cat Coding',
+			'Dicta',
 			column || vscode.ViewColumn.One,
 			getWebviewOptions(extensionUri),
 		);
@@ -121,12 +104,6 @@ class CatCodingPanel {
 		);
 	}
 
-	public doRefactor() {
-		// Send a message to the webview webview.
-		// You can send any JSON serializable data.
-		this._panel.webview.postMessage({ command: 'refactor' });
-	}
-
 	public dispose() {
 		CatCodingPanel.currentPanel = undefined;
 
@@ -147,26 +124,26 @@ class CatCodingPanel {
 		// Vary the webview's content based on where it is located in the editor.
 		switch (this._panel.viewColumn) {
 			case vscode.ViewColumn.Two:
-				this._updateForCat(webview, 'Compiling Cat');
+				this._updateForCat(webview);
 				return;
 
 			case vscode.ViewColumn.Three:
-				this._updateForCat(webview, 'Testing Cat');
+				this._updateForCat(webview);
 				return;
 
 			case vscode.ViewColumn.One:
 			default:
-				this._updateForCat(webview, 'Coding Cat');
+				this._updateForCat(webview);
 				return;
 		}
 	}
 
-	private _updateForCat(webview: vscode.Webview, catName: keyof typeof cats) {
-		this._panel.title = catName;
-		this._panel.webview.html = this._getHtmlForWebview(webview, cats[catName]);
+	private _updateForCat(webview: vscode.Webview) {
+		this._panel.title = 'Dicta panel title'
+		this._panel.webview.html = this._getHtmlForWebview(webview);
 	}
 
-	private _getHtmlForWebview(webview: vscode.Webview, catGifPath: string) {
+	private _getHtmlForWebview(webview: vscode.Webview) {
 		// Local path to main script run in the webview
 		const scriptPathOnDisk = vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js');
 
@@ -188,24 +165,16 @@ class CatCodingPanel {
 			<html lang="en">
 			<head>
 				<meta charset="UTF-8">
-
-				<!--
-					Use a content security policy to only allow loading images from https or from our extension directory,
-					and only allow scripts that have a specific nonce.
-				-->
 				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">
-
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 				<link href="${stylesResetUri}" rel="stylesheet">
 				<link href="${stylesMainUri}" rel="stylesheet">
 
-				<title>Cat Coding</title>
+				<title>Dicta</title>
 			</head>
 			<body>
-				<img src="${catGifPath}" width="300" />
-				<h1 id="lines-of-code-counter">0</h1>
-
+				Marca was here
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
