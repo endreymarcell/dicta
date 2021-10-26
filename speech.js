@@ -1,43 +1,37 @@
 'use strict';
+const recorder = require('node-record-lpcm16');
+const speech = require('@google-cloud/speech');
 const { spawn } = require('child_process')
 const ws = require('ws')
 
-let wtf = {
-  client: undefined,
+let vscode;
+
+const config = {
+  encoding: 'LINEAR16',
+  sampleRateHertz: 16000,
+  languageCode: 'en-US',
 };
 
-function sendKeys(str) {
-  spawn('sendkeys', ['send', '-a', 'Code', '-i', '0.2', '-d', '0.04', '-c', str])
-  if (wtf.client) {
-    console.log('sending to client too')
-    wtf.client.send(str);
+const request = {
+  config,
+  interimResults: false,
+};
+
+function broadcast(message) {
+  console.log('Sending message to `sendkeys`:', message);
+  spawn('sendkeys', ['send', '-a', 'Code', '-i', '0.2', '-d', '0.04', '-c', message])
+  if (vscode) {
+    console.log('Sending message to VS Code too')
+    vscode.send(message);
   }
 }
 
-function main(
-  encoding = 'LINEAR16',
-  sampleRateHertz = 16000,
-  languageCode = 'en-US'
-) {
-  const recorder = require('node-record-lpcm16');
-  const speech = require('@google-cloud/speech');
-
+function main() {
   const server = new ws.Server({ port: 7071 })
   server.on('connection', newClient => {
-    console.log('somebody connected!');
-    wtf.client = newClient
+    console.log('VS Code has connected to the WS server');
+    vscode = newClient
   })
-
-  const config = {
-    encoding: encoding,
-    sampleRateHertz: sampleRateHertz,
-    languageCode: languageCode,
-  };
-
-  const request = {
-    config,
-    interimResults: false, //Get interim results from stream
-  };
 
   const client = new speech.SpeechClient();
 
@@ -48,7 +42,7 @@ function main(
       const result = data.results[0]?.alternatives[0]
       if (result) {
         console.log(result.transcript);
-        sendKeys(result.transcript);
+        broadcast(result.transcript);
       } else {
         console.error('ran out of tokens')
       }
@@ -56,9 +50,9 @@ function main(
 
   recorder
     .record({
-      sampleRateHertz: sampleRateHertz,
+      sampleRateHertz: config.sampleRateHertz,
       threshold: 0, //silence threshold
-      recordProgram: 'rec', // Try also "arecord" or "sox"
+      recordProgram: 'rec',
       silence: '5.0', //seconds of silence before ending
     })
     .stream()
