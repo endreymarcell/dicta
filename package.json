@@ -1,53 +1,13 @@
 {
-	"name": "dicta",
-	"description": "Dicta",
-	"version": "0.0.1",
-	"publisher": "endrey.marcell@gmail.com",
-	"private": true,
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/endreymarcell/dicta"
-	},
-	"engines": {
-		"vscode": "^1.47.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:dicta.start",
-		"onWebviewPanel:dicta"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "dicta.start",
-				"title": "Open up Dicta",
-				"category": "Dicta"
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./ && mv out/main.* media",
-		"lint": "eslint . --ext .ts,.tsx",
-		"watch": "tsc -w -p ./"
-	},
-	"devDependencies": {
-		"@google-cloud/speech": "^4.9.0",
-		"@types/node": "^12.12.0",
-		"@types/vscode": "^1.47.0",
-		"@types/vscode-webview": "^1.57.0",
-		"@types/ws": "^8.2.0",
-		"@typescript-eslint/eslint-plugin": "^4.16.0",
-		"@typescript-eslint/parser": "^4.16.0",
-		"eslint": "^7.21.0",
-		"node-record-lpcm16": "^1.0.1",
-		"typescript": "^4.4.3"
-	},
-	"dependencies": {
-		"ws": "^8.2.3"
-	}
+  "name": "dicta",
+  "version": "0.1.0",
+  "main": "index.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/endreymarcell/dicta.git"
+  },
+  "author": "endrey.marcell@gmail.com",
+  "license": "GPL-3.0-or-later"
 }

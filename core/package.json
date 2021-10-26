@@ -1,0 +1,26 @@
+{
+	"name": "dicta-core",
+	"description": "Dicta speech recognition",
+	"version": "0.0.1",
+	"publisher": "endrey.marcell@gmail.com",
+	"private": true,
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/endreymarcell/dicta"
+	},
+	"main": "speech.js",
+	"scripts": {
+		"run": "ts-node speech.ts"
+	},
+	"devDependencies": {
+		"@types/node": "^16.11.6",
+		"@types/ws": "^8.2.0",
+		"typescript": "^4.4.3"
+	},
+	"dependencies": {
+		"@google-cloud/speech": "^4.9.0",
+		"node-record-lpcm16": "^1.0.1",
+		"ws": "^8.2.3"
+	}
+}
