@@ -68,6 +68,10 @@ class DictaPanel {
 		DictaPanel.currentPanel = new DictaPanel(panel, extensionUri);
 	}
 
+	public static sendMessage(message: string) {
+		DictaPanel.currentPanel?._panel.webview.postMessage(message);
+	}
+
 	private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
 		this._panel = panel;
 		this._extensionUri = extensionUri;
@@ -92,13 +96,7 @@ class DictaPanel {
 
 		// Handle messages from the webview
 		this._panel.webview.onDidReceiveMessage(
-			message => {
-				switch (message.command) {
-					case 'alert':
-						vscode.window.showErrorMessage(message.text);
-						return;
-				}
-			},
+			message => vscode.window.showInformationMessage(message),
 			null,
 			this._disposables
 		);
