@@ -1,8 +1,17 @@
 'use strict';
 const { spawn } = require('child_process')
+const ws = require('ws')
+
+let wtf = {
+  client: undefined,
+};
 
 function sendKeys(str) {
   spawn('sendkeys', ['send', '-a', 'Code', '-i', '0.2', '-d', '0.04', '-c', str])
+  if (wtf.client) {
+    console.log('sending to client too')
+    wtf.client.send(str);
+  }
 }
 
 function main(
@@ -12,6 +21,12 @@ function main(
 ) {
   const recorder = require('node-record-lpcm16');
   const speech = require('@google-cloud/speech');
+
+  const server = new ws.Server({ port: 7071 })
+  server.on('connection', newClient => {
+    console.log('somebody connected!');
+    wtf.client = newClient
+  })
 
   const config = {
     encoding: encoding,

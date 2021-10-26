@@ -1,9 +1,13 @@
 import * as vscode from 'vscode';
+import * as WebSocket from 'ws';
+let socket: WebSocket;
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand('dicta.start', () => {
 			DictaPanel.createOrShow(context.extensionUri);
+			socket = new WebSocket('ws://localhost:7071/ws');
+			socket.on('message', message => vscode.window.showInformationMessage(message.toString()));
 		})
 	);
 
