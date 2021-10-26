@@ -3,18 +3,18 @@ import * as vscode from 'vscode';
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.commands.registerCommand('dicta.start', () => {
-			CatCodingPanel.createOrShow(context.extensionUri);
+			DictaPanel.createOrShow(context.extensionUri);
 		})
 	);
 
 	if (vscode.window.registerWebviewPanelSerializer) {
 		// Make sure we register a serializer in activation event
-		vscode.window.registerWebviewPanelSerializer(CatCodingPanel.viewType, {
+		vscode.window.registerWebviewPanelSerializer(DictaPanel.viewType, {
 			async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
 				console.log(`Got state: ${state}`);
 				// Reset the webview options so we use latest uri for `localResourceRoots`.
 				webviewPanel.webview.options = getWebviewOptions(context.extensionUri);
-				CatCodingPanel.revive(webviewPanel, context.extensionUri);
+				DictaPanel.revive(webviewPanel, context.extensionUri);
 			}
 		});
 	}
@@ -30,11 +30,11 @@ function getWebviewOptions(extensionUri: vscode.Uri): vscode.WebviewOptions {
 	};
 }
 
-class CatCodingPanel {
+class DictaPanel {
 	/**
 	 * Track the currently panel. Only allow a single panel to exist at a time.
 	 */
-	public static currentPanel: CatCodingPanel | undefined;
+	public static currentPanel: DictaPanel | undefined;
 
 	public static readonly viewType = 'dicta';
 
@@ -48,24 +48,24 @@ class CatCodingPanel {
 			: undefined;
 
 		// If we already have a panel, show it.
-		if (CatCodingPanel.currentPanel) {
-			CatCodingPanel.currentPanel._panel.reveal(column);
+		if (DictaPanel.currentPanel) {
+			DictaPanel.currentPanel._panel.reveal(column);
 			return;
 		}
 
 		// Otherwise, create a new panel.
 		const panel = vscode.window.createWebviewPanel(
-			CatCodingPanel.viewType,
+			DictaPanel.viewType,
 			'Dicta',
 			column || vscode.ViewColumn.One,
 			getWebviewOptions(extensionUri),
 		);
 
-		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionUri);
+		DictaPanel.currentPanel = new DictaPanel(panel, extensionUri);
 	}
 
 	public static revive(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
-		CatCodingPanel.currentPanel = new CatCodingPanel(panel, extensionUri);
+		DictaPanel.currentPanel = new DictaPanel(panel, extensionUri);
 	}
 
 	private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
@@ -105,7 +105,7 @@ class CatCodingPanel {
 	}
 
 	public dispose() {
-		CatCodingPanel.currentPanel = undefined;
+		DictaPanel.currentPanel = undefined;
 
 		// Clean up our resources
 		this._panel.dispose();
