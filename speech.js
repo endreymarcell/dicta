@@ -1,4 +1,9 @@
 'use strict';
+const { spawn } = require('child_process')
+
+function sendKeys(str) {
+  spawn('sendkeys', ['send', '-a', 'Code', '-i', '0.2', '-d', '0.04', '-c', str])
+}
 
 function main(
   encoding = 'LINEAR16',
@@ -24,13 +29,15 @@ function main(
   const recognizeStream = client
     .streamingRecognize(request)
     .on('error', console.error)
-    .on('data', data =>
-      process.stdout.write(
-        data.results[0] && data.results[0].alternatives[0]
-          ? `Transcription: ${data.results[0].alternatives[0].transcript}\n`
-          : '\n\nReached transcription time limit, press Ctrl+C\n'
-      )
-    );
+    .on('data', data => {
+      const result = data.results[0]?.alternatives[0]
+      if (result) {
+        console.log(result.transcript);
+        sendKeys(result.transcript);
+      } else {
+        console.error('ran out of tokens')
+      }
+    });
 
   recorder
     .record({
