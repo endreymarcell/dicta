@@ -11,7 +11,7 @@
 	},
 	"main": "speech.js",
 	"scripts": {
-		"run": "ts-node speech.ts"
+		"start": "ts-node app.ts"
 	},
 	"devDependencies": {
 		"@types/node": "^16.11.6",
