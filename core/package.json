@@ -21,6 +21,7 @@
 	"dependencies": {
 		"@google-cloud/speech": "^4.9.0",
 		"node-record-lpcm16": "^1.0.1",
+		"ts-node": "^10.4.0",
 		"ws": "^8.2.3"
 	}
 }

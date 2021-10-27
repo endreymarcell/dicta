@@ -1,13 +1,14 @@
-'use strict';
-const recorder = require('node-record-lpcm16');
-const speech = require('@google-cloud/speech');
-const { spawn } = require('child_process')
-const ws = require('ws')
+/// <reference path="./node-record-lpcm16.d.ts" />
 
-let vscode;
+import recorder from 'node-record-lpcm16';
+import speech from '@google-cloud/speech';
+import { spawn } from 'child_process';
+import ws from 'ws';
+
+let vscode: WebSocket;
 
 const config = {
-  encoding: 'LINEAR16',
+  encoding: 'LINEAR16' as const,
   sampleRateHertz: 16000,
   languageCode: 'en-US',
 };
@@ -17,7 +18,7 @@ const request = {
   interimResults: false,
 };
 
-function broadcast(message) {
+function broadcast(message: string) {
   console.log('Sending message to `sendkeys`:', message);
   spawn('sendkeys', ['send', '-a', 'Code', '-i', '0.2', '-d', '0.04', '-c', message])
   if (vscode) {
@@ -28,7 +29,7 @@ function broadcast(message) {
 
 function main() {
   const server = new ws.Server({ port: 7071 })
-  server.on('connection', newClient => {
+  server.on('connection', (newClient: any) => {
     console.log('VS Code has connected to the WS server');
     vscode = newClient
   })
@@ -38,7 +39,7 @@ function main() {
   const recognizeStream = client
     .streamingRecognize(request)
     .on('error', console.error)
-    .on('data', data => {
+    .on('data', (data: any) => {
       const result = data.results[0]?.alternatives[0]
       if (result) {
         console.log(result.transcript);
@@ -63,8 +64,8 @@ function main() {
 }
 
 process.on('unhandledRejection', err => {
-  console.error(err.message);
+  console.error(err);
   process.exitCode = 1;
 });
 
-main(...process.argv.slice(2));
+main();
