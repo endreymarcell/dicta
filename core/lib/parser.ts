@@ -69,6 +69,9 @@ export function replaceSymbols(input: string): string {
     }
 }
 
+// TODO
+// 1. refactor so that I don't have to repeat the values for key synonyms
+// 2. unify with the patterns somehow
 type Keyword = string;
 const keywords = new Map<string, Keyword>(Object.entries({
     // Counts
