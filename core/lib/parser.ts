@@ -76,6 +76,11 @@ type Keyword = string;
 const keywords = new Map<string, Keyword>(Object.entries({
     // Counts
     ...numbers,
+    1: '1',
+    2: '2',
+    3: '3',
+    4: '4',
+    5: '5',
     twice: '2',
     times: '',
     lines: '',
@@ -111,6 +116,9 @@ const keywords = new Map<string, Keyword>(Object.entries({
     surrounding: 's',
     word: 'w',
     words: 'w',
+    'a word': 'w',
+    line: '_',
+    'a line': '_',
 
     // Specifiers
     ...delimiters,
@@ -125,6 +133,12 @@ const keywords = new Map<string, Keyword>(Object.entries({
     yank: 'y',
     change: 'c',
     surround: 'ys',
+
+    // History
+    undo: 'u',
+    redo: 'c-r',
+    repeat: '.',
+    again: '.',
 }))
 
 // keywords
@@ -134,15 +148,17 @@ const motions = [...stepMotions, ...jumpMotions]
 
 const paramlessCommands = ['paste above', 'paste below']
 const targetedCommands = ['yank', 'delete']
-const commandsWithPayload = ['insert', 'add']
+const commandsWithPayload = ['insert', 'add', 'new line above', 'new line below']
 const targetedCommandsWithPayload = ['change', 'surround']
 
 const simpleTextObjects = ['line']
 const textObjectPrefixes = ['in', 'inside', 'around', 'surrounding']
 const textObjectSpecifiers = ['parentheses', 'single quotes', 'double quotes', 'curly braces', 'brackets', 'word']
 
+const historyCommands = ['undo', 'redo', 'repeat', 'again']
+
 // patterns
-const countPattern: PatternUnitShorthand = ['count', Object.keys(numbers)]
+const countPattern: PatternUnitShorthand = ['count', [...Object.keys(numbers), ...Object.values(numbers)]]
 const motionsPattern: PatternUnitShorthand = ['motion', motions]
 const simpleTextObjectsPattern: PatternUnitShorthand = ['target', simpleTextObjects]
 const compoundTextObjectPattern: PatternUnitShorthand[] = [['prefix', textObjectPrefixes], ['specifier', textObjectSpecifiers]]
@@ -151,6 +167,7 @@ const targetedCommandPattern: PatternUnitShorthand = ['command', targetedCommand
 const commandsWithPayloadPattern: PatternUnitShorthand = ['command', commandsWithPayload]
 const targetedCommandsWithPayloadPattern: PatternUnitShorthand = ['command', targetedCommandsWithPayload]
 const tail = '__tail'
+const historyCommandPattern: PatternUnitShorthand = ['command', historyCommands]
 
 const vimPattern: PatternShorthand[] = [
     [motionsPattern],
@@ -164,7 +181,8 @@ const vimPattern: PatternShorthand[] = [
     [targetedCommandsWithPayloadPattern, motionsPattern, tail],
     [targetedCommandsWithPayloadPattern, countPattern, motionsPattern, tail],
     [targetedCommandsWithPayloadPattern, simpleTextObjectsPattern, tail],
-    [targetedCommandsWithPayloadPattern, ...compoundTextObjectPattern, tail]
+    [targetedCommandsWithPayloadPattern, ...compoundTextObjectPattern, tail],
+    [historyCommandPattern],
 ];
 
 export function parse(input: string): string {

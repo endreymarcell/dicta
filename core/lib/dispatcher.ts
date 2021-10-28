@@ -12,10 +12,8 @@ export function startServer() {
 }
 
 export function broadcast(message: string) {
-    console.log('Sending message to `sendkeys`:', message);
-    spawn('sendkeys', ['send', '-a', 'Code', '-i', '0.2', '-d', '0.04', '-c', message])
+    spawn('sendkeys', ['send', '-a', 'Code', '-i', '0.2', '-d', '0.04', '-c', message + '<c:escape>'])
     if (vscode) {
-        console.log('Sending message to VS Code too')
         vscode.send(message);
     }
 }

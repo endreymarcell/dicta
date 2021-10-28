@@ -19,8 +19,11 @@ describe('parser', () => {
         test('motion', () => {
             expect(parse('down')).toBe('j');
         })
-        test('count + motion', () => {
+        test('count (spelled out) + motion', () => {
             expect(parse('three up')).toBe('3k')
+        })
+        test('count (with number) + motion', () => {
+            expect(parse('3 down')).toBe('3j')
         })
         test('multi-word paramless command', () => {
             expect(parse('paste below')).toBe('p');
