@@ -11,9 +11,9 @@ export function startServer() {
     })
 }
 
-export function broadcast(message: string) {
-    spawn('sendkeys', ['send', '-a', 'Code', '-i', '0.2', '-d', '0.04', '-c', message + '<c:escape>'])
+export function broadcast(spoken: string, parsed: string) {
+    spawn('sendkeys', ['send', '-a', 'Code', '-i', '0.2', '-d', '0.04', '-c', parsed + '<c:escape>'])
     if (vscode) {
-        vscode.send(message);
+        vscode.send(JSON.stringify([spoken, parsed]));
     }
 }

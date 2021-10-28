@@ -1,3 +1,4 @@
+import { correct } from "./corrector";
 import { broadcast, startServer } from "./lib/dispatcher";
 import { parse } from "./lib/parser";
 import { startListening } from "./lib/speech";
@@ -6,11 +7,15 @@ function main() {
     startServer();
     startListening(data => {
         console.log('Raw:', data)
-        const parsedResults = parse(data.trim());
+
+        const corrected = correct(data);
+        console.log('Corrected:', corrected)
+
+        const parsedResults = parse(corrected.trim());
         console.log('Parsed:', parsedResults)
         console.log('');
 
-        broadcast(parsedResults);
+        broadcast(data, parsedResults);
     });
 }
 

@@ -7,7 +7,9 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('dicta.start', () => {
 			DictaPanel.createOrShow(context.extensionUri);
 			socket = new WebSocket('ws://localhost:7071/ws');
-			socket.on('message', message => vscode.window.showInformationMessage(message.toString()));
+			socket.on('message', message => {
+				DictaPanel.sendMessage(message.toString())
+			});
 		})
 	);
 
@@ -141,7 +143,7 @@ class DictaPanel {
 	}
 
 	private _updateForCat(webview: vscode.Webview) {
-		this._panel.title = 'Dicta panel title'
+		this._panel.title = 'Dicta'
 		this._panel.webview.html = this._getHtmlForWebview(webview);
 	}
 
@@ -176,7 +178,8 @@ class DictaPanel {
 				<title>Dicta</title>
 			</head>
 			<body>
-				Marca was here
+				<div id="spoken">spoken text comes here</div>
+				<div id="vim">ci"helloworld</div>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
