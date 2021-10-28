@@ -37,6 +37,29 @@ const symbols = new Map<string, string>(Object.entries({
     'triple equals': '===',
 }));
 
+export function replaceSymbols(input: string): string {
+    if (input === '') {
+        return '';
+    }
+
+    let originalSymbol: string = '';
+    for (const original of symbols.keys()) {
+        if (input.startsWith(original)) {
+            originalSymbol = original;
+            break;
+        }
+    }
+    if (originalSymbol !== '') {
+        return symbols.get(originalSymbol) + replaceSymbols(input.slice(originalSymbol.length));
+    } else {
+        if (input.includes(' ')) {
+            return input.slice(0, input.indexOf(' ')) + replaceSymbols(input.slice(input.indexOf(' ') + 1));
+        } else {
+            return input;
+        }
+    }
+}
+
 type Keyword = string | { char: string, doesExpectInput?: boolean };
 const keywords = new Map<string, Keyword>(Object.entries({
     // Counts
@@ -81,29 +104,6 @@ const keywords = new Map<string, Keyword>(Object.entries({
     change: { char: 'c', doesExpectInput: true },
     surround: { char: 'ys', doesExpectInput: true },
 }))
-
-export function replaceSymbols(input: string): string {
-    if (input === '') {
-        return '';
-    }
-
-    let originalSymbol: string = '';
-    for (const original of symbols.keys()) {
-        if (input.startsWith(original)) {
-            originalSymbol = original;
-            break;
-        }
-    }
-    if (originalSymbol !== '') {
-        return symbols.get(originalSymbol) + replaceSymbols(input.slice(originalSymbol.length));
-    } else {
-        if (input.includes(' ')) {
-            return input.slice(0, input.indexOf(' ')) + replaceSymbols(input.slice(input.indexOf(' ') + 1));
-        } else {
-            return input;
-        }
-    }
-}
 
 export function turnIntoVimCommand(input: string): string {
     if (input === '') {
