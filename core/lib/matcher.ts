@@ -51,7 +51,7 @@ export function matchMultiplePatterns(text: string, patterns: Pattern[]): MatchR
     return undefined;
 }
 
-type PatternUnitShorthand = [name: string, values: string[]] | '__tail' | string;
+export type PatternUnitShorthand = [name: string, values: string[]] | '__tail' | string;
 export type PatternShorthand = PatternUnitShorthand[] | [...PatternUnitShorthand[], '__tail'];
 
 function expandShorthand(shorthand: PatternShorthand): Pattern {

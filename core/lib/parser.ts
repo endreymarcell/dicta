@@ -1,3 +1,5 @@
+import { match, PatternShorthand, PatternUnitShorthand } from "./matcher";
+
 const numbers = {
     one: '1',
     two: '2',
@@ -7,23 +9,30 @@ const numbers = {
     six: '6'
 }
 
-const symbols = new Map<string, string>(Object.entries({
-    ...numbers,
-    'space': ' ',
+const delimiters = {
     'single quote': "'",
     'single quotes': "'",
     'double quote': '"',
     'double quotes': '"',
     'parenthesis': '(',
+    'parentheses': '(',
     'opening parenthesis': '(',
     'closing parenthesis': ')',
-    'parentheses': ')',
-    'curly braces': '}',
+    'curly': '{',
+    'curly brace': '{',
+    'curly braces': '{',
     'opening curly': '{',
     'closing curly': '}',
-    'brackets': ']',
+    'bracket': '[',
+    'brackets': '[',
     'opening bracket': '[',
     'closing bracket': ']',
+}
+
+const symbols = new Map<string, string>(Object.entries({
+    ...numbers,
+    ...delimiters,
+    'space': ' ',
     'period': '.',
     'dot': '.',
     'comma': ',',
@@ -60,7 +69,7 @@ export function replaceSymbols(input: string): string {
     }
 }
 
-type Keyword = string | { char: string, doesExpectInput?: boolean };
+type Keyword = string;
 const keywords = new Map<string, Keyword>(Object.entries({
     // Counts
     ...numbers,
@@ -75,6 +84,10 @@ const keywords = new Map<string, Keyword>(Object.entries({
     down: 'j',
     left: 'l',
     right: 'r',
+    forward: 'w',
+    forwards: 'w',
+    backward: 'b',
+    backwards: 'b',
     home: '^',
     'to line start': '^',
     'to the start of the line': '^',
@@ -94,48 +107,78 @@ const keywords = new Map<string, Keyword>(Object.entries({
     around: 'a',
     surrounding: 's',
     word: 'w',
+    words: 'w',
 
-    insert: { char: 'i', doesExpectInput: true },
-    append: { char: 'a', doesExpectInput: true },
+    // Specifiers
+    ...delimiters,
+
+    // Commands
+    insert: 'i',
+    append: 'a',
+    add: 'a',
     delete: 'd',
     'paste above': 'P',
     'paste below': 'p',
     yank: 'y',
-    change: { char: 'c', doesExpectInput: true },
-    surround: { char: 'ys', doesExpectInput: true },
+    change: 'c',
+    surround: 'ys',
 }))
 
-export function turnIntoVimCommand(input: string): string {
-    if (input === '') {
-        return '';
-    }
+// keywords
+const stepMotions = ['up', 'down', 'left', 'right']
+const jumpMotions = ['words', 'backward', 'forward', 'home', 'end', 'top', 'bottom']
+const motions = [...stepMotions, ...jumpMotions]
 
-    let originalKeyword: string = '';
-    for (const keyword of keywords.keys()) {
-        if (input.startsWith(keyword)) {
-            originalKeyword = keyword;
-            break;
-        }
-    }
+const paramlessCommands = ['paste above', 'paste below']
+const targetedCommands = ['yank', 'delete']
+const commandsWithPayload = ['insert', 'add']
+const targetedCommandsWithPayload = ['change', 'surround']
 
-    if (originalKeyword !== '') {
-        const command = keywords.get(originalKeyword);
-        if (typeof command !== 'string' && command?.doesExpectInput) {
-            return command.char + input.slice(originalKeyword.length)
-        } else {
-            return command + turnIntoVimCommand(input.slice(originalKeyword.length));
-        }
+const simpleTextObjects = ['line']
+const textObjectPrefixes = ['in', 'inside', 'around', 'surrounding']
+const textObjectSpecifiers = ['parentheses', 'single quotes', 'double quotes', 'curly braces', 'brackets', 'word']
+
+// patterns
+const countPattern: PatternUnitShorthand = ['count', Object.keys(numbers)]
+const motionsPattern: PatternUnitShorthand = ['motion', motions]
+const simpleTextObjectsPattern: PatternUnitShorthand = ['target', simpleTextObjects]
+const compoundTextObjectPattern: PatternUnitShorthand[] = [['prefix', textObjectPrefixes], ['specifier', textObjectSpecifiers]]
+const paramlessCommandPattern: PatternUnitShorthand = ['command', paramlessCommands]
+const targetedCommandPattern: PatternUnitShorthand = ['command', targetedCommands]
+const commandsWithPayloadPattern: PatternUnitShorthand = ['command', commandsWithPayload]
+const targetedCommandsWithPayloadPattern: PatternUnitShorthand = ['command', targetedCommandsWithPayload]
+const tail = '__tail'
+
+const vimPattern: PatternShorthand[] = [
+    [motionsPattern],
+    [countPattern, motionsPattern],
+    [paramlessCommandPattern],
+    [targetedCommandPattern, motionsPattern],
+    [targetedCommandPattern, countPattern, motionsPattern],
+    [targetedCommandPattern, simpleTextObjectsPattern],
+    [targetedCommandPattern, ...compoundTextObjectPattern],
+    [commandsWithPayloadPattern, tail],
+    [targetedCommandsWithPayloadPattern, motionsPattern, tail],
+    [targetedCommandsWithPayloadPattern, countPattern, motionsPattern, tail],
+    [targetedCommandsWithPayloadPattern, simpleTextObjectsPattern, tail],
+    [targetedCommandsWithPayloadPattern, ...compoundTextObjectPattern, tail]
+];
+
+export function parse(input: string): string {
+    const result = match(input, vimPattern);
+    if (result === undefined) {
+        return ':(';
     } else {
-        if (input.includes(' ')) {
-            return input.slice(0, input.indexOf(' ')) + turnIntoVimCommand(input.slice(input.indexOf(' ') + 1));
-        } else {
-            return input;
-        }
+        return result.map(unit => {
+            if (unit.name === 'tail') {
+                return replaceSymbols(unit.value);
+            } else {
+                if (keywords.has(unit.value)) {
+                    return keywords.get(unit.value);
+                } else {
+                    return `[UNKNOWN_KEYWORD: ${unit.value}]`;
+                }
+            }
+        }).join('');
     }
-}
-
-export function parse(input: string) {
-    const inputWithSymbols = replaceSymbols(input);
-    const asVimCommand = turnIntoVimCommand(inputWithSymbols);
-    return asVimCommand;
 }
