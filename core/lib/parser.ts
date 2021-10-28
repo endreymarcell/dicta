@@ -90,8 +90,8 @@ const keywords = new Map<string, Keyword>(Object.entries({
     go: '',
     up: 'k',
     down: 'j',
-    left: 'l',
-    right: 'r',
+    left: 'h',
+    right: 'l',
     forward: 'w',
     forwards: 'w',
     backward: 'b',
@@ -108,6 +108,11 @@ const keywords = new Map<string, Keyword>(Object.entries({
     bottom: 'G',
     'to the bottom': 'G',
     'to the bottom of the document': 'G',
+    find: '/',
+    until: '/',
+    'go to': '/',
+    search: '/',
+    'search for': '/',
 
     // Text objects
     inside: 'i',
@@ -143,7 +148,7 @@ const keywords = new Map<string, Keyword>(Object.entries({
 
 // keywords
 const stepMotions = ['up', 'down', 'left', 'right']
-const jumpMotions = ['words', 'backward', 'forward', 'home', 'end', 'top', 'bottom']
+const jumpMotions = ['words', 'backward', 'backwards', 'forward', 'forwards', 'home', 'end', 'top', 'bottom']
 const motions = [...stepMotions, ...jumpMotions]
 
 const paramlessCommands = ['paste above', 'paste below']
