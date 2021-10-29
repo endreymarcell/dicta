@@ -10,6 +10,7 @@ window.addEventListener('message', event => {
     const spokenElement = window.document?.getElementById('spoken');
     if (spokenElement) {
         spokenElement.innerHTML = removeControlChars(spoken);
+        spokenElement.classList.remove('hidden');
     }
     const vimElement = window.document?.getElementById('vim');
     if (vimElement) {

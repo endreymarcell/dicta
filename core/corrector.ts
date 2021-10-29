@@ -8,6 +8,9 @@ const fixes = new Map<string, string>(Object.entries({
     free: 'three',
     bird: 'word',
     verte: 'word',
+    talk: 'top',
+    cope: 'top',
+    stop: 'top',
 }));
 
 function replaceFixes(input: string): string {

@@ -152,8 +152,8 @@ const keywords = new Map<string, Keyword>(Object.entries({
 
 // keywords
 const stepMotions = ['up', 'down', 'left', 'right']
-const jumpMotions = ['word', 'words', 'backward', 'backwards', 'forward', 'forwards', 'home', 'end', 'top', 'bottom', 'next', 'previous']
-const motionsWithPayload = ['search', 'search for', 'go to']
+const jumpMotions = ['word', 'words', 'backward', 'backwards', 'forward', 'forwards', 'home', 'end', 'top', 'bottom', 'next', 'previous', 'to the top', 'go to the top', 'go to the bottom', 'to the bottom', 'go to the beginning of the document', 'go to the end of the document']
+const motionsWithPayload = ['search', 'search for', 'go to', 'find']
 const simpleMotions = [...stepMotions, ...jumpMotions]
 
 const paramlessCommands = ['paste above', 'paste below']

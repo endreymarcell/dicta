@@ -184,8 +184,8 @@ class DictaPanel {
 				<title>Dicta</title>
 			</head>
 			<body>
-				<div id="spoken">spoken text comes here</div>
-				<div id="vim">ci"helloworld</div>
+				<div id="spoken" class="hidden"></div>
+				<div id="vim"></div>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
