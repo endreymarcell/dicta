@@ -6,14 +6,14 @@ import { startListening } from "./lib/speech";
 function main() {
     startServer();
     startListening(data => {
-        console.log('Raw:', data)
+      console.log('--------------------------------')
+        console.log(`I heard: "${data}"`);
 
         const corrected = correct(data);
-        console.log('Corrected:', corrected)
+        console.log(`I corrected it to: "${corrected}"`)
 
         const parsedResults = parse(corrected.trim());
-        console.log('Parsed:', parsedResults)
-        console.log('');
+        console.log(`And I parsed it to: "${parsedResults}"\n`)
 
         broadcast(data, parsedResults);
     });
