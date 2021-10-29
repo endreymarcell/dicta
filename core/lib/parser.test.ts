@@ -16,10 +16,13 @@ describe('parser', () => {
     });
 
     describe('full parsing', () => {
-        test('motion', () => {
+        test('simple motion', () => {
             expect(parse('down')).toBe('j');
         })
-        test('count (spelled out) + motion', () => {
+        test('motion with payload', () => {
+            expect(parse('go to function')).toBe('/function<c:enter>')
+        })
+        test('count (spelled out) + simple motion', () => {
             expect(parse('three up')).toBe('3k')
         })
         test('count (with number) + motion', () => {
@@ -39,20 +42,20 @@ describe('parser', () => {
             expect(parse('yank inside curly braces')).toBe('yi{');
         })
         test('command with payload, no symbols', () => {
-            expect(parse('insert I space like space trains')).toBe('iI like trains');
+            expect(parse('insert I space like space trains')).toBe('iI like trains<c:escape>');
         })
         test('command with payload, symbols', () => {
             expect(parse('insert alert opening parenthesis single quote hello space world single quote closing parenthesis semicolon'))
-                .toBe("ialert('hello world');");
+                .toBe("ialert('hello world');<c:escape>");
         })
         test('targeted command with payload (motion)', () => {
-            expect(parse('change end whatever')).toBe('c$whatever');
+            expect(parse('change end whatever')).toBe('c$whatever<c:escape>');
         })
         test('targeted command with payload (motion with count)', () => {
-            expect(parse('change two words hello space world')).toBe('c2whello world')
+            expect(parse('change two words hello space world')).toBe('c2whello world<c:escape>')
         })
         test('targeted command with payload (text object)', () => {
-            expect(parse('change inside double quotes hello space world')).toBe('ci"hello world')
+            expect(parse('change inside double quotes hello space world')).toBe('ci"hello world<c:escape>')
         })
     })
 })

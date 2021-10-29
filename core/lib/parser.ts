@@ -1,4 +1,4 @@
-import { match, PatternShorthand, PatternUnitShorthand } from "./matcher";
+import { match, MatchResult, PatternShorthand, PatternUnitShorthand } from "./matcher";
 
 const numbers = {
     one: '1',
@@ -113,7 +113,9 @@ const keywords = new Map<string, Keyword>(Object.entries({
     'go to': '/',
     search: '/',
     'search for': '/',
-
+    next: 'n',
+    previous: 'N',
+    
     // Text objects
     inside: 'i',
     in: 'i',
@@ -150,8 +152,9 @@ const keywords = new Map<string, Keyword>(Object.entries({
 
 // keywords
 const stepMotions = ['up', 'down', 'left', 'right']
-const jumpMotions = ['word', 'words', 'backward', 'backwards', 'forward', 'forwards', 'home', 'end', 'top', 'bottom']
-const motions = [...stepMotions, ...jumpMotions]
+const jumpMotions = ['word', 'words', 'backward', 'backwards', 'forward', 'forwards', 'home', 'end', 'top', 'bottom', 'next', 'previous']
+const motionsWithPayload = ['search', 'search for', 'go to']
+const simpleMotions = [...stepMotions, ...jumpMotions]
 
 const paramlessCommands = ['paste above', 'paste below']
 const targetedCommands = ['yank', 'delete']
@@ -166,7 +169,8 @@ const historyCommands = ['undo', 'redo', 'repeat', 'again']
 
 // patterns
 const countPattern: PatternUnitShorthand = ['count', [...Object.keys(numbers), ...Object.values(numbers)]]
-const motionsPattern: PatternUnitShorthand = ['motion', motions]
+const simpleMotionsPattern: PatternUnitShorthand = ['motion', simpleMotions]
+const motionsWithPayloadPattern: PatternUnitShorthand = ['motion', motionsWithPayload]
 const simpleTextObjectsPattern: PatternUnitShorthand = ['target', simpleTextObjects]
 const compoundTextObjectPattern: PatternUnitShorthand[] = [['prefix', textObjectPrefixes], ['specifier', textObjectSpecifiers]]
 const paramlessCommandPattern: PatternUnitShorthand = ['command', paramlessCommands]
@@ -177,32 +181,54 @@ const tail = '__tail'
 const historyCommandPattern: PatternUnitShorthand = ['command', historyCommands]
 
 const vimPattern: PatternShorthand[] = [
-    [motionsPattern],
-    [countPattern, motionsPattern],
+    [simpleMotionsPattern],
+    [motionsWithPayloadPattern, tail],
+    [countPattern, simpleMotionsPattern],
     [paramlessCommandPattern],
-    [targetedCommandPattern, motionsPattern],
-    [targetedCommandPattern, countPattern, motionsPattern],
+    [targetedCommandPattern, simpleMotionsPattern],
+    [targetedCommandPattern, countPattern, simpleMotionsPattern],
     [targetedCommandPattern, simpleTextObjectsPattern],
     [targetedCommandPattern, ...compoundTextObjectPattern],
     [commandsWithPayloadPattern, tail],
-    [targetedCommandsWithPayloadPattern, motionsPattern, tail],
-    [targetedCommandsWithPayloadPattern, countPattern, motionsPattern, tail],
+    [targetedCommandsWithPayloadPattern, simpleMotionsPattern, tail],
+    [targetedCommandsWithPayloadPattern, countPattern, simpleMotionsPattern, tail],
     [targetedCommandsWithPayloadPattern, simpleTextObjectsPattern, tail],
     [targetedCommandsWithPayloadPattern, ...compoundTextObjectPattern, tail],
     [historyCommandPattern],
     [countPattern, historyCommandPattern],
 ];
 
+function addControlChars(match: Exclude<MatchResult, undefined>): Exclude<MatchResult, undefined> {
+    if (match && match.length >= 2 && match[match.length - 1].name === 'tail') {
+        const mainUnit = match.find(unit => unit.name === 'command' || unit.name === 'motion')
+        if (mainUnit === undefined) {
+            return match;
+        }
+        if ([...commandsWithPayload, ...targetedCommandsWithPayload].includes(mainUnit.value)) {
+            return [...match, { name: 'control', value: '<c:escape>' }]
+        } else if ([...motionsWithPayload].includes(mainUnit.value)) {
+            return [...match, { name: 'control', value: '<c:enter>'}]
+        } else {
+            return match;
+        }
+    } else {
+        return match;
+    }
+}
+
 export function parse(input: string): string {
     const result = match(input, vimPattern);
     if (result === undefined) {
         throw new Error("Pattern matching failed");
     } else {
-        return result.map(unit => {
+        const withControlChars = addControlChars(result);
+        return withControlChars.map(unit => {
             if (unit.name === 'tail') {
                 return replaceSymbols(unit.value);
             } else {
-                if (keywords.has(unit.value)) {
+                if (unit.name === 'control') {
+                    return unit.value;
+                } else if (keywords.has(unit.value)) {
                     return keywords.get(unit.value);
                 } else {
                     throw new Error(`Parsing failed: unknown key: ${unit.value}`)

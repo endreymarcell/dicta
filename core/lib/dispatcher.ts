@@ -12,7 +12,7 @@ export function startServer() {
 }
 
 export function broadcastMessage(spoken: string, parsed: string) {
-    spawn('sendkeys', ['send', '-a', 'Code', '-i', '0.2', '-d', '0.04', '-c', parsed + '<c:escape>'])
+    spawn('sendkeys', ['send', '-a', 'Code', '-i', '0.2', '-d', '0.04', '-c', parsed])
     if (vscode) {
         vscode.send(JSON.stringify(['message', spoken, parsed]));
     }
