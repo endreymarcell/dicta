@@ -14,17 +14,16 @@ const delimiters = {
     'single quotes': "'",
     'double quote': '"',
     'double quotes': '"',
+    backticks: '`',
     'parenthesis': '(',
-    'parentheses': '(',
+    'parentheses': ')',
     'opening parenthesis': '(',
     'closing parenthesis': ')',
-    'curly': '{',
-    'curly brace': '{',
-    'curly braces': '{',
+    'curly braces': '}',
     'opening curly': '{',
     'closing curly': '}',
     'bracket': '[',
-    'brackets': '[',
+    'brackets': ']',
     'opening bracket': '[',
     'closing bracket': ']',
 }
@@ -32,18 +31,20 @@ const delimiters = {
 const symbols = new Map<string, string>(Object.entries({
     ...numbers,
     ...delimiters,
-    'space': ' ',
-    'period': '.',
-    'dot': '.',
-    'comma': ',',
+    space: ' ',
+    period: '.',
+    dot: '.',
+    comma: ',',
     'question mark': '?',
-    'dash': '-',
-    'underscore': '_',
-    'slash': '/',
-    'semicolon': ';',
-    'equals': '=',
+    dash: '-',
+    underscore: '_',
+    slash: '/',
+    semicolon: ';',
+    color: ':',
+    equals: '=',
     'double equals': '==',
     'triple equals': '===',
+    dollar: '$'
 }));
 
 export function replaceSymbols(input: string): string {
@@ -158,7 +159,7 @@ const simpleMotions = [...stepMotions, ...jumpMotions]
 
 const paramlessCommands = ['paste above', 'paste below']
 const targetedCommands = ['yank', 'delete']
-const commandsWithPayload = ['insert', 'add', 'new line above', 'new line below']
+const commandsWithPayload = ['insert', 'add', 'append', 'new line above', 'new line below']
 const targetedCommandsWithPayload = ['change', 'surround']
 
 const simpleTextObjects = ['line']

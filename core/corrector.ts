@@ -11,6 +11,9 @@ const fixes = new Map<string, string>(Object.entries({
     talk: 'top',
     cope: 'top',
     stop: 'top',
+    ovid: 'forward',
+    colin: 'colon',
+    calendar: 'colon',
 }));
 
 function replaceFixes(input: string): string {
@@ -18,5 +21,5 @@ function replaceFixes(input: string): string {
 }
 
 export function correct(input: string): string {
-    return replaceFixes(input.trim().toLowerCase());
+    return replaceFixes(input.trim().toLowerCase()).replace('back takes', 'backticks');
 }
