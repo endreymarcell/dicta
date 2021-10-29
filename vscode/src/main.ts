@@ -9,10 +9,18 @@ window.addEventListener('message', event => {
     
     const spokenElement = window.document?.getElementById('spoken');
     if (spokenElement) {
-        spokenElement.innerHTML = spoken;
+        spokenElement.innerHTML = removeControlChars(spoken);
     }
     const vimElement = window.document?.getElementById('vim');
     if (vimElement) {
-        vimElement.innerHTML = vim;
+        vimElement.innerHTML = replaceControlChars(vim);
     }
 });
+
+function removeControlChars(input: string): string {
+    return input.replace(/<c:.*>/g, '');
+}
+
+function replaceControlChars(input: string): string {
+    return input.replace('<c:enter>', '⏎').replace('<c:escape>', '⎋')
+}
