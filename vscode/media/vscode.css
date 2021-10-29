@@ -39,7 +39,7 @@ div {
 #vim {
 	color: white;
 	font-size: 2em;
-	font-family: 'Monaco', 'Courier New', Courier, monospace;
+	font-family: 'Fira Code', 'Monaco', 'Courier New', Courier, monospace;
 }
 
 .hidden {
