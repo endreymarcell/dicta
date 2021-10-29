@@ -138,6 +138,8 @@ const keywords = new Map<string, Keyword>(Object.entries({
     yank: 'y',
     change: 'c',
     surround: 'ys',
+    'new line above': 'O',
+    'new line below': 'o',
 
     // History
     undo: 'u',
@@ -148,7 +150,7 @@ const keywords = new Map<string, Keyword>(Object.entries({
 
 // keywords
 const stepMotions = ['up', 'down', 'left', 'right']
-const jumpMotions = ['words', 'backward', 'backwards', 'forward', 'forwards', 'home', 'end', 'top', 'bottom']
+const jumpMotions = ['word', 'words', 'backward', 'backwards', 'forward', 'forwards', 'home', 'end', 'top', 'bottom']
 const motions = [...stepMotions, ...jumpMotions]
 
 const paramlessCommands = ['paste above', 'paste below']
@@ -188,12 +190,13 @@ const vimPattern: PatternShorthand[] = [
     [targetedCommandsWithPayloadPattern, simpleTextObjectsPattern, tail],
     [targetedCommandsWithPayloadPattern, ...compoundTextObjectPattern, tail],
     [historyCommandPattern],
+    [countPattern, historyCommandPattern],
 ];
 
 export function parse(input: string): string {
     const result = match(input, vimPattern);
     if (result === undefined) {
-        return ':(';
+        throw new Error("Pattern matching failed");
     } else {
         return result.map(unit => {
             if (unit.name === 'tail') {
@@ -202,7 +205,7 @@ export function parse(input: string): string {
                 if (keywords.has(unit.value)) {
                     return keywords.get(unit.value);
                 } else {
-                    return `[UNKNOWN_KEYWORD: ${unit.value}]`;
+                    throw new Error(`Parsing failed: unknown key: ${unit.value}`)
                 }
             }
         }).join('');

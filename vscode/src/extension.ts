@@ -8,7 +8,13 @@ export function activate(context: vscode.ExtensionContext) {
 			DictaPanel.createOrShow(context.extensionUri);
 			socket = new WebSocket('ws://localhost:7071/ws');
 			socket.on('message', message => {
-				DictaPanel.sendMessage(message.toString())
+				const asString = message.toString();
+				const parsed = JSON.parse(asString);
+				if (parsed[0] === 'message') {
+					DictaPanel.sendMessage(JSON.stringify(parsed.slice(1)));
+				} else {
+					vscode.window.showErrorMessage(`Could not parse "${parsed[1]}"`)
+				}
 			});
 		})
 	);

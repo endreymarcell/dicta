@@ -1,5 +1,5 @@
 import { correct } from "./corrector";
-import { broadcast, startServer } from "./lib/dispatcher";
+import { broadcastError, broadcastMessage, startServer } from "./lib/dispatcher";
 import { parse } from "./lib/parser";
 import { startListening } from "./lib/speech";
 
@@ -12,10 +12,18 @@ function main() {
         const corrected = correct(data);
         console.log(`I corrected it to: "${corrected}"`)
 
-        const parsedResults = parse(corrected.trim());
-        console.log(`And I parsed it to: "${parsedResults}"\n`)
-
-        broadcast(data, parsedResults);
+		try {
+			const parsedResults = parse(corrected.trim());
+			console.log(`And I parsed it to: "${parsedResults}"\n`)
+			broadcastMessage(corrected, parsedResults);
+		} catch (err: any) {
+			if (err.message === "Pattern matching failed") {
+				console.error(`Pattern matching failed :(`)
+				broadcastError(corrected);
+			} else {
+				console.error(err.message)
+			}
+		}
     });
 }
 

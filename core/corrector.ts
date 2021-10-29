@@ -4,14 +4,14 @@ const fixes = new Map<string, string>(Object.entries({
     piece: 'paste',
     peace: 'paste',
     pillow: 'below',
+    app: 'up',
+    free: 'three',
+    bird: 'word',
+    verte: 'word',
 }));
 
 function replaceFixes(input: string): string {
-    let fixed = input;
-    for (const [bad, good] of fixes) {
-        fixed = fixed.replace(bad, good);
-    }
-    return fixed;
+    return input.split(' ').map(part => fixes.get(part) ?? part).join(' ');
 }
 
 export function correct(input: string): string {
