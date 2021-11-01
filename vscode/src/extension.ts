@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
 				if (parsed[0] === 'message') {
 					DictaPanel.sendMessage(JSON.stringify(parsed.slice(1)));
 				} else {
-					vscode.window.showErrorMessage(`Could not parse "${parsed[1]}"`)
+					// vscode.window.showErrorMessage(`Could not parse "${parsed[1]}"`)
 				}
 			});
 		})
