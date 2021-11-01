@@ -21,6 +21,13 @@ const fixes = new Map<string, string>(Object.entries({
     button: 'bottom',
     vert: 'word',
     attend: 'append',
+    verge: 'word',
+    coat: 'quote',
+    coats: 'quotes',
+    backpacks: 'backticks',
+    chain: 'change',
+    dialed: 'down',
+    world: 'word',
 }));
 
 function replaceFixes(input: string): string {
@@ -34,4 +41,7 @@ export function correct(input: string): string {
         .replace("it's around", 'surround')
         .replace('the word', 'word')
         .replace('change of guard', 'change word')
+        .replace("you're", "")
+        .replace("I'm due", "undo")
+
 }
