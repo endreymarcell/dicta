@@ -16,6 +16,11 @@ const fixes = new Map<string, string>(Object.entries({
     calendar: 'colon',
     surrounds: 'surround',
     maine: 'name',
+    ford: 'word',
+    vard: 'word',
+    button: 'bottom',
+    vert: 'word',
+    attend: 'append',
 }));
 
 function replaceFixes(input: string): string {
@@ -25,5 +30,8 @@ function replaceFixes(input: string): string {
 export function correct(input: string): string {
     return replaceFixes(input.trim().toLowerCase())
         .replace('back takes', 'backticks')
-        .replace('the band', 'append');
+        .replace('the band', 'append')
+        .replace("it's around", 'surround')
+        .replace('the word', 'word')
+        .replace('change of guard', 'change word')
 }
