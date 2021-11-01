@@ -43,5 +43,6 @@ export function correct(input: string): string {
         .replace('change of guard', 'change word')
         .replace("you're", "")
         .replace("I'm due", "undo")
+        .replace('opening parentheses', 'opening parenthesis')
 
 }
