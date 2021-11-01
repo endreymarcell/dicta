@@ -14,6 +14,8 @@ const fixes = new Map<string, string>(Object.entries({
     ovid: 'forward',
     colin: 'colon',
     calendar: 'colon',
+    surrounds: 'surround',
+    maine: 'name',
 }));
 
 function replaceFixes(input: string): string {
@@ -21,5 +23,7 @@ function replaceFixes(input: string): string {
 }
 
 export function correct(input: string): string {
-    return replaceFixes(input.trim().toLowerCase()).replace('back takes', 'backticks');
+    return replaceFixes(input.trim().toLowerCase())
+        .replace('back takes', 'backticks')
+        .replace('the band', 'append');
 }

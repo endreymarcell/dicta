@@ -146,7 +146,7 @@ const keywords = new Map<string, Keyword>(Object.entries({
 
     // History
     undo: 'u',
-    redo: 'c-r',
+    redo: '<c:r:control>',
     repeat: '.',
     again: '.',
 }))

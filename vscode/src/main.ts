@@ -23,5 +23,8 @@ function removeControlChars(input: string): string {
 }
 
 function replaceControlChars(input: string): string {
-    return input.replace('<c:enter>', '⏎').replace('<c:escape>', '⎋')
+    return input
+        .replace('<c:enter>', '⏎')
+        .replace('<c:escape>', '⎋')
+        .replace('<c:r:control>', '⌃R')
 }
