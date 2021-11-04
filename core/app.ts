@@ -1,4 +1,4 @@
-import { correct } from "./corrector";
+import { correct } from "./lib/corrector";
 import { broadcastError, broadcastMessage, startServer } from "./lib/dispatcher";
 import { parse } from "./lib/parser";
 import { startListening } from "./lib/speech";
