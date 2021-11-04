@@ -6,3 +6,5 @@ The `core` package contains a Node script responsible for speech recognition and
 The `vscode` package has a Code extension to visually display the results.
 
 Disclaimer: this was written in a hurry and only for the demo, so it only needed to work but didn't need to look pretty.
+
+See also my Getting Started with Vim guide: [getting-started-with-vim.md](getting-started-with-vim.md)
