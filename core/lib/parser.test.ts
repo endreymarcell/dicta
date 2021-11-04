@@ -39,7 +39,7 @@ describe('parser', () => {
         })
         test('targeted command (text object)', () => {
             expect(parse('delete inside double quotes')).toBe('di"');
-            expect(parse('yank inside curly braces')).toBe('yi{');
+            expect(parse('yank inside curly braces')).toBe('yi}');
         })
         test('command with payload, no symbols', () => {
             expect(parse('insert I space like space trains')).toBe('iI like trains<c:escape>');
