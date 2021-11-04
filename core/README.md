@@ -14,3 +14,8 @@ I hoped that I would be able to make all of this work in the VS Code extension, 
 - Install `sendkeys` from https://github.com/socsieng/sendkeys-macos
 - Install pnpm: `npm i -g pnpm`
 - Bootstrap the workspace: `pnpm i`
+
+## Usage
+`npm run start`
+
+Believe or not, there's also `npm test`.
